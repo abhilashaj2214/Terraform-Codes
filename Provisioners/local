@@ -1,0 +1,4 @@
+provisioner "local-exec" {    command="echo ${aws_vpc.main.id}>> 
+vpc.txt" 
+
+ }
