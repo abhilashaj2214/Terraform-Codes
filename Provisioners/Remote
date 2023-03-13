@@ -1,0 +1,25 @@
+resource "aws_instance" "bastion_host" {
+
+  ami                         = "ami-00874d747dde814fa"
+  instance_type               = "t2.small"
+  key_name                    = "up-demo"
+  vpc_security_group_ids      = [module.bastion_sg.security_group_id]
+  subnet_id                   = module.vpc.public_subnets[0]
+  associate_public_ip_address = true
+  tags = {
+    Name = "bastion host"
+  }
+  provisioner "remote-exec" {
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install nginx -y"
+    ]
+    connection {
+      # The default username for our AMI
+      user        = "ubuntu"
+      host        = self.public_ip
+      type        = "ssh"
+      private_key = file("/Users/dipeshgarg/Downloads/up-demo.pem")
+    }
+  }
+}
